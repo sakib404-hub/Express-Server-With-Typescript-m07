@@ -55,18 +55,24 @@ app.get('/', (req : Request, res : Response)=>{
    )
 })
 
-app.get('/users', (req: Request, res: Response)=>{
+app.get('/users', async(req: Request, res: Response)=>{
+   try{
 
-    res.status(200).json({
+    const result = await pool.query(`SELECT * FROM users`);
+    
+     res.status(200).json({
         message : 'successfully fetched the users data',
-        users : [
-            {
-                id : 1,
-                name : 'John Doe',
-                email : 'john.doe@example.com'
-            }
-        ]
+        success : true,
+        data : result.rows
     });
+
+   }catch(err : any){
+    res.status(500).json({
+        message : err.message,
+        success : false,
+        error : err
+    })
+   }
 })
 
 app.post("/users", async(req : Request, res : Response)=>{
