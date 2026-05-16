@@ -75,6 +75,35 @@ app.get('/users', async(req: Request, res: Response)=>{
    }
 })
 
+app.get('/users/:id', async(req: Request, res: Response)=>{
+    try{
+
+        const { id } = req.params;
+
+        const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
+
+        if(result.rows.length === 0){
+            res.status(404).json({
+                message : `User with id : ${id} is not found`,
+                success : false
+            })
+        } 
+
+        res.status(200).json({
+            message : `successfully fetched the user with id : ${id}`,
+            success : true,
+            data : result.rows[0]
+        })
+
+    }catch(err : any){
+        res.status(500).json({
+        message : err.message,
+        success : false,
+        error : err
+    }) 
+    }
+})
+
 app.post("/users", async(req : Request, res : Response)=>{
 
    try{
