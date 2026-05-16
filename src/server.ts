@@ -17,6 +17,32 @@ const pool = new Pool({
 })
 
 
+//? initializing the database 
+
+const initDB = async() =>{
+    try{
+        await pool.query(`
+                CREATE TABLE IF NOT EXISTS users(
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(20),
+                email VARCHAR(20) NOT NULL,
+                password VARCHAR(20) NOT NULL,
+                is_active BOOLEAN DEFAULT true,
+                age INT,
+
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            )
+        `)
+
+        console.log('Database connected successfully!');
+    }catch(err){
+        console.log(err);
+    }
+}
+initDB();
+
+
 
 app.get('/', (req : Request, res : Response)=>{
    // res.send('Hello World!, this is the express server running with the typescript module system : ESNext');
