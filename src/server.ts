@@ -25,7 +25,7 @@ const initDB = async() =>{
                 CREATE TABLE IF NOT EXISTS users(
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(20),
-                email VARCHAR(20) NOT NULL,
+                email VARCHAR(20) UNIQUE NOT NULL,
                 password VARCHAR(20) NOT NULL,
                 is_active BOOLEAN DEFAULT true,
                 age INT,
@@ -69,18 +69,27 @@ app.get('/users', (req: Request, res: Response)=>{
     });
 })
 
-app.post("/", async(req : Request, res : Response)=>{
+app.post("/users", async(req : Request, res : Response)=>{
 
-    const {name, organization, password} = req.body;
+   try{
+    const {name, email, age, password} = req.body;
+
+    const result = await pool.query(`
+        INSERT INTO users(name, email, age, password) VALUES($1, $2, $3, $4) RETURNING *`, [name, email, age, password]);
 
     res.status(201).json({
         message : 'User created successfully',
-        data : {
-            name,
-            organization
-        }
+        data : result.rows[0]
+            
+    })
+   }catch(err : any){
+
+    res.status(500).json({
+        message : err.message,
+        error : err
     })
 
+   }
 })
 
 app.listen(port, ()=>{
