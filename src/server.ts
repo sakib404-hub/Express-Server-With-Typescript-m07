@@ -1,10 +1,10 @@
 import express, { type Application, type Request, type Response } from "express";
 import {Pool} from "pg";
 import dotenv from "dotenv";
+import config from "./config";
 dotenv.config();
 
 const app : Application = express();
-const port = 5001;
 
 // this is the middleware to parse the incoming request body as JSON
 app.use(express.json());
@@ -13,7 +13,7 @@ app.use(express.urlencoded({extended : true}));
 
 
 const pool = new Pool({
-    connectionString : `postgresql://neondb_owner:${process.env.NEON_DB_PASS}@ep-weathered-frost-aqohlb74-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
+    connectionString : config.connectionString
 })
 
 
@@ -181,7 +181,7 @@ app.delete('/users/:id', async(req : Request, res : Response)=>{
             success : true,
             data : result.rows[0]
         })
-        
+
     }catch(err : any){
         res.status(500).json({
             message : err.message,
@@ -190,6 +190,6 @@ app.delete('/users/:id', async(req : Request, res : Response)=>{
     }
 })
 
-app.listen(port, ()=>{
-    console.log(`This app is listening from port number : ${port}`);
+app.listen(config.port, ()=>{
+    console.log(`This app is listening from port number : ${config.port}`);
 })  
