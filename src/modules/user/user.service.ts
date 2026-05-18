@@ -3,10 +3,10 @@ import type { IUser } from "./user.interface";
 
 
 const createUserIntoDB = async (payLoad : IUser)=>{
-    const {name, email, age, password} = payLoad;
+    const {name, email, age, password, is_active = false} = payLoad;
 
      const result = await pool.query(`
-        INSERT INTO users(name, email, age, password) VALUES($1, $2, $3, $4) RETURNING *`, [name, email, age, password]);
+        INSERT INTO users(name, email, age, password, is_active) VALUES($1, $2, $3, $4,  $5) RETURNING *`, [name, email, age, password, is_active]);
    
     return result;
 }
